@@ -100,8 +100,8 @@ func main() {
 			}
 			//fmt.Println("New CSV Field Count: ", len(records[0]), "last value = ", records[0][len(records[0])-1])
 			ICAO := records[0][4]
-			//Sometimes the TCP read doesn't read the full record properly, so if ICAO is empty - don't process the record as it will not contain valid data
-			if len(ICAO) > 0 {
+			//Sometimes the TCP read doesn't read the full record properly, so check to see if the ICAO code is exaclty 6 chars in length
+			if len(ICAO) == 6 {
 
 				altitude, _ := strconv.ParseInt(records[0][11], 0, 64)
 				latitude, _ := strconv.ParseFloat(records[0][14], 64)
