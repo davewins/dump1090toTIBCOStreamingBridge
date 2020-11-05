@@ -1,0 +1,13 @@
+[Unit]
+Description=dump1090 to TIBCO Streaming Bridge
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/home/pi/dump1090toTIBCOStreamingBridge/startBridge.sh
+StandardOutput=file:/var/log/dump1090toTIBCO.log
+StandardError=file:/var/log/dump1090toTIBCOerr.log
+
+[Install]
+WantedBy=multi-user.target
+
