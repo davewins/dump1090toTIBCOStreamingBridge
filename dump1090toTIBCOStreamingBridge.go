@@ -126,21 +126,24 @@ func main() {
 				// use MarshalIndent to reformat slice array as JSON
 				sbMessage, _ := json.Marshal(streamingMessages)
 				// print the reformatted struct as JSON
-				fmt.Printf("%s\n", sbMessage)
-
-				// Publish message to TIBCO Streaming
-				req, err := http.NewRequest(http.MethodPut, *streamingHostURL, bytes.NewBuffer(sbMessage))
-				req.SetBasicAuth(*streamingHostUsername, *streamingHostPassword)
-				// set the request header Content-Type for json
-				req.Header.Set("Content-Type", "application/json; charset=utf-8")
-				req.Header.Set("Accept", "application/json")
-				resp, err := client.Do(req)
-				if err != nil {
-					panic(err)
+				//fmt.Printf("%s\n", sbMessage)
+				//if there's a lat/long message, or a message with a FlightID (records[0][10]) or an Altitude change message - then send it
+				if (latitude != 0 && longitude != 0) || len(records[0][10]) > 0 || altitude > 0 {
+					fmt.Printf("%s\n", sbMessage)
+					// Publish message to TIBCO Streaming
+					req, err := http.NewRequest(http.MethodPut, *streamingHostURL, bytes.NewBuffer(sbMessage))
+					req.SetBasicAuth(*streamingHostUsername, *streamingHostPassword)
+					// set the request header Content-Type for json
+					req.Header.Set("Content-Type", "application/json; charset=utf-8")
+					req.Header.Set("Accept", "application/json")
+					resp, err := client.Do(req)
+					if err != nil {
+						panic(err)
+					}
+					defer resp.Body.Close()
+					bodyBytes, err := ioutil.ReadAll(resp.Body)
+					fmt.Println("TIBCO Streaming Response:", resp.StatusCode, ":", string(bodyBytes))
 				}
-				defer resp.Body.Close()
-				bodyBytes, err := ioutil.ReadAll(resp.Body)
-				fmt.Println("TIBCO Streaming Response:", resp.StatusCode, ":", string(bodyBytes))
 			}
 		}
 	}
