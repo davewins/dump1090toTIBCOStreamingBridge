@@ -35,3 +35,10 @@ Once built, you can execute the appliction using a command line such as:
 --streamingHostURL should point to your TIBCO Streaming (LiveView) endpoint. e.g. https://xyz.com:443/lv/api/v1/tables/PlanesPublish/tuples
 
 --region and --sourceID are used as text fields that you could use to filter/sort data
+
+## Viewing results
+
+My data is being sent to the TIBCO Spotfire Real Time Flight Tracker demo that can be found at the following link: 
+https://www.tibco.com/products/tibco-spotfire/learn/demos/real-time-flight-tracker
+
+![](RealtimeFlights.png)
