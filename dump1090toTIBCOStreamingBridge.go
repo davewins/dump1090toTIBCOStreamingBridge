@@ -61,12 +61,14 @@ func main() {
 	}
 
 	dump1090URL := flag.String("dump1090URL", "", "The host:port URL of dump1090. e.g: -dump1090URL localhost:30003 (Required)")
-	streamingHostURL := flag.String("streamingHostURL", "", "The host:port of the TIBCO Streaming server. e.g. -streamingHostURL https://streaming.spotfire-cloud.com:443 (Required)")
+	streamingHostURL := flag.String("streamingHostURL", "", "The host:port/path of the TIBCO Streaming server. e.g. -streamingHostURL https://:[port]//lv/api/v1/tables/PlanesProxyPublish/tuples (Required)")
 	streamingHostUsername := flag.String("streamingHostUsername", "", "The username you wish to authenticate against the TIBCO Streaming server. e.g. -streamingHostUsername foo (Required)")
 	streamingHostPassword := flag.String("streamingHostPassword", "", "The password of the user to authenticate against the TIBCO Streaming server. e.g. -streamingHostPassword bar (Required)")
+	region := flag.String("region", "unknown region", "The Region of where you are sending your messages from e.g. -region UK")
+	sourceID := flag.String("sourceID", "unknown source", "Who is sending these messages? e.g. -sourceID JohnSmith")
 	flag.Parse()
 
-	//Check we have each of the command line arguments
+	//Check we have each of the required command line arguments
 	if *dump1090URL == "" || *streamingHostURL == "" || *streamingHostUsername == "" || *streamingHostPassword == "" {
 		flag.PrintDefaults()
 		os.Exit(1)
@@ -100,7 +102,7 @@ func main() {
 			}
 			//fmt.Println("New CSV Field Count: ", len(records[0]), "last value = ", records[0][len(records[0])-1])
 			ICAO := records[0][4]
-			//Sometimes the TCP read doesn't read the full record properly, so if ICAO is empty - don't process the record as it will not contain valid data
+			//Sometimes the TCP read doesn't read the full record properly, so if ICAO is empty/not equal to 6 - don't process the record as it will not contain valid data
 			if len(ICAO) == 6 {
 
 				altitude, _ := strconv.ParseInt(records[0][11], 0, 64)
@@ -120,8 +122,8 @@ func main() {
 						Speed:            speed,
 						LastReceiveTime:  time.Now().UnixNano() / 1000000,
 						StartReceiveTime: time.Now().UnixNano() / 1000000,
-						Region:           "Gloucestershire, United Kingdom",
-						SourceID:         "davewinstone"}}
+						Region:           *region,
+						SourceID:         *sourceID}}
 
 				// use MarshalIndent to reformat slice array as JSON
 				sbMessage, _ := json.Marshal(streamingMessages)
